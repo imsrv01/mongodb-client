@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: mongodb
+  name: mongodb
+spec:
+  containers:
+  - image: imsrv01/mongodb-client
+    name: mongodb-client
+    resources: {}
+  - image: mongo
+    name: mongodatabase
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
