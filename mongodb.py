@@ -5,37 +5,46 @@ from flask_pymongo import PyMongo
 
 app = Flask(__name__)
 
-app.config['MONGO_DBNAME'] = 'restdb'
-app.config['MONGO_URI'] = 'mongodb://localhost:27017/restdb'
+app.config['MONGO_DBNAME'] = 'test'
+#app.config['MONGO_URI'] = 'mongodb://localhost:27017/restdb'
+app.config['MONGO_URI'] = 'mongodb+srv://imsrv01:imsrv01@imsrv01-djp0e.mongodb.net/test?retryWrites=true&w=majority'
 
 mongo = PyMongo(app)
 
-@app.route('/star', methods=['GET'])
-def get_all_stars():
-  star = mongo.db.stars
+@app.route('/', methods=['GET'])
+def hello():
+    return 'Sample CRUD operations in MongoDB'
+
+@app.route('/tenants', methods=['GET'])
+def get_all_tenants():
+  tenants = mongo.db.tenants
+  print(tenants)
+  #return jsonify(tenants)
   output = []
-  for s in star.find():
-    output.append({'name' : s['name'], 'distance' : s['distance']})
-  return jsonify({'result' : output})
+  for tenant in tenants.find():
+    output.append({ 'name' : tenant['name'], 'email' : tenant['email']})
+  return jsonify({'tenants' : output})
 
-@app.route('/star/', methods=['GET'])
-def get_one_star(name):
-  star = mongo.db.stars
-  s = star.find_one({'name' : name})
-  if s:
-    output = {'name' : s['name'], 'distance' : s['distance']}
+@app.route('/tenants/<name>', methods=['GET'])
+def get_one_tenant(name):
+  print("get one tenant {}".format(name))
+  tenants = mongo.db.tenants
+  
+  tenant = tenants.find_one({'name' : name})
+  if tenant:
+    output = {'name' : tenant['name'], 'email' : tenant['email']}
   else:
-    output = "No such name"
+    output = "No tenant found"
   return jsonify({'result' : output})
 
-@app.route('/star', methods=['POST'])
-def add_star():
-  star = mongo.db.stars
+@app.route('/tenants', methods=['POST'])
+def add_tenant():
+  tenants = mongo.db.tenants
   name = request.json['name']
-  distance = request.json['distance']
-  star_id = star.insert({'name': name, 'distance': distance})
-  new_star = star.find_one({'_id': star_id })
-  output = {'name' : new_star['name'], 'distance' : new_star['distance']}
+  email = request.json['email']
+  tenant_id = tenants.insert_one({'name': name, 'email': email})
+  new_tenant = tenants.find_one({'name': name })
+  output = {'name' : new_tenant['name'], 'email' : new_tenant['email']}
   return jsonify({'result' : output})
 
 if __name__ == '__main__':
