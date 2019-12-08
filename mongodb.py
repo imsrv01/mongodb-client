@@ -14,7 +14,7 @@ mongo = PyMongo(app)
 
 @app.route('/', methods=['GET'])
 def hello():
-    return 'Sample CRUD operations in MongoDB'
+    return 'Sample CRUD operations in MongoDB...'
 
 @app.route('/tenants', methods=['GET'])
 def get_all_tenants():
